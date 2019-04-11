@@ -12,17 +12,74 @@
 <h2>Transcoding one video ...</h2>
 
 <h3>Transcode the video to 360p resolution</h3>
+<span>Priority</span>
+<select id="priority-360">
+	<option value="0">-</option>
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
 <button id="360p">Trancode to 360p</button>
 
 <h3>Transcode the video to 480p resolution</h3>
+<span>Priority</span>
+<select id="priority-480">
+	<option value="0">-</option>
+	<option value="1" selected>1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
 <button id="480p">Trancode to 480p</button>
 
 <h3>Transcode the video to 720p resolution</h3>
+<span>Priority</span>
+<select id="priority-720">
+	<option value="0">-</option>
+	<option value="1">1</option>
+	<option value="2" selected>2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
 <button id="720p">Trancode to 720p</button>
 
 <h3>Transcode the video to 1080p resolution</h3>
+<span>Priority</span>
+<select id="priority-1080">
+	<option value="0">-</option>
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
 <button id="1080p">Trancode to 1080p</button>
 
+<!--
 <h3>Transcode the video to all resolutions</h3>
 <button id="ALL">Trancode to ALL</button>
 
@@ -37,53 +94,58 @@
 </select>
 
 <button id="reality">Simulate!</button>
+-->
 
 <script type="text/javascript">
 	$("#360p").click(function(){
-	    $.post("/transcode360p",
-	    {},
-	    function(data, status){
+		var element = document.getElementById('priority-360');
+		var priority = element.options[element.selectedIndex].value;
+		var url = "/transcode360p" + (priority !== "0"? ("?priority=" + priority) : "");
+
+	    $.post(url, {}, function(data, status){
 	        console.log("Data: " + data);
 	    });
 	});
 
 	$("#480p").click(function(){
-	    $.post("/transcode480p",
-	    {},
-	    function(data, status){
-	        console.log(data);
+		var element = document.getElementById('priority-480');
+		var priority = element.options[element.selectedIndex].value;
+		var url = "/transcode480p" + (priority !== "0"? ("?priority=" + priority) : "");
+
+	    $.post(url, {}, function(data, status){
+	        console.log("Data: " + data);
 	    });
 	});
 
 	$("#720p").click(function(){
-	    $.post("/transcode720p",
-	    {},
-	    function(data, status){
-	        console.log(data);
+		var element = document.getElementById('priority-720');
+		var priority = element.options[element.selectedIndex].value;
+		var url = "/transcode720p" + (priority !== "0"? ("?priority=" + priority) : "");
+
+	    $.post(url, {}, function(data, status){
+	        console.log("Data: " + data);
 	    });
 	});
 
 	$("#1080p").click(function(){
-	    $.post("/transcode1080p",
-	    {},
-	    function(data, status){
-	        console.log(data);
+		var element = document.getElementById('priority-1080');
+		var priority = element.options[element.selectedIndex].value;
+		var url = "/transcode1080p" + (priority !== "0"? ("?priority=" + priority) : "");
+
+	    $.post(url, {}, function(data, status){
+	        console.log("Data: " + data);
 	    });
 	});
 
 	$("#ALL").click(function(){
-	    $.post("/transcodeALL",
-	    {},
-	    function(data, status){
+	    $.post("/transcodeALL", {}, function(data, status){
 	        console.log(data);
 	    });
 	});
 
 	$("#reality").click(function(){
 		var element = document.getElementById('numberOfVid');
-	    $.post("/transcodeMANY?numOfVids=" + element.options[element.selectedIndex].value,
-	    {},
-	    function(data, status){
+	    $.post("/transcodeMANY?numOfVids=" + element.options[element.selectedIndex].value, {}, function(data, status){
 	        console.log(data);
 	    });
 	});
