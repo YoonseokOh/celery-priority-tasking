@@ -15,7 +15,9 @@ celeryconfig['CELERY_QUEUES'] = (
     Queue('tasks', Exchange('tasks'), routing_key='tasks',
           queue_arguments={'x-max-priority': 10}),
 )
+# True : get tasks after previous working is done / False : get work during others task is running
 celeryconfig['CELERY_ACKS_LATE'] = True
+# The max number of prefetch queue in each worker. DEFAULT : 4 / 1 is good for priority queue.
 celeryconfig['CELERYD_PREFETCH_MULTIPLIER'] = 1
 celery_app.config_from_object(celeryconfig)
 
