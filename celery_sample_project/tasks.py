@@ -2,17 +2,16 @@ from celery import Celery, shared_task
 from kombu import Exchange, Queue
 import time
 
-# Celery Config
-
+# Celery
 celery_app = Celery()
 celeryconfig = {}
-celeryconfig['BROKER_URL'] = 'amqp://'
 # redis
 # celeryconfig['CELERY_RESULT_BACKEND'] = 'redis://localhost'
 # rabbitmq
-celeryconfig['CELERY_RESULT_BACKEND'] = 'amqp://guest:guest@localhost:5672/myvhost'
+celeryconfig['CELERY_BROKER_URL'] = 'amqp://guest:guest@localhost//'
+celeryconfig['CELERY_TASK_DEFAULT_QUEUE'] = 'priority_queue'
 celeryconfig['CELERY_QUEUES'] = (
-    Queue('tasks', Exchange('tasks'), routing_key='tasks',
+    Queue('priority_queue', Exchange('priority_queue'), routing_key='priority_queue',
           queue_arguments={'x-max-priority': 10}),
 )
 # True : get tasks after previous working is done / False : get work during others task is running
@@ -39,7 +38,7 @@ celery_app.config_from_object(celeryconfig)
 ###
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
 def transcode_360p():
     # Simulate transcoding a video into 360p resolution
     print('BEGIN:   Video transcoding to 360p resolution!')
@@ -48,7 +47,7 @@ def transcode_360p():
     return "360p"
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
 def transcode_480p():
     # Simulate transcoding a video into 480p resolution
     print('BEGIN:   Video transcoding to 480p resolution!')
@@ -57,7 +56,7 @@ def transcode_480p():
     return "480p"
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
 def transcode_720p():
     # Simulate transcoding a video into 720p resolution
     print('BEGIN:   Video transcoding to 720p resolution!')
@@ -66,7 +65,7 @@ def transcode_720p():
     return "720p"
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
 def transcode_1080p():
     # Simulate transcoding a video into 1080p resolution
     print('BEGIN:   Video transcoding to 1080p resolution!')
@@ -75,7 +74,7 @@ def transcode_1080p():
     return "1080p"
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
 def common_setup():
     # Setting up the processor
     print('BEGIN:   Setup the processor!')
@@ -84,7 +83,15 @@ def common_setup():
     return "common_setup"
 
 
-@celery_app.task(queue='tasks')
+@celery_app.task(queue='priority_queue')
+def test_priority(sleeptime=1, priority=1):
+    print(f'BEGIN : priority={priority} sleeptime={sleeptime}')
+    time.sleep(sleeptime)
+    print(f'END   : priority={priority} sleeptime={sleeptime}')
+    return
+
+
+@celery_app.task(queue='priority_queue')
 def end_processing():
     # Method which deletes queue files and ends processing
     print('BEGIN:   Ending the processors!')

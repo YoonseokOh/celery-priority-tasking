@@ -5,6 +5,21 @@ from celery import group, chain, chord
 app = Flask(__name__)
 
 
+def test():
+    test_priority.apply_async(priority=9,
+                              kwargs={"sleeptime": 3, "priority": 9})
+    for x in range(5):
+        priority = 5 - x
+        test_priority.apply_async(priority=priority,
+                                  kwargs={"sleeptime": 1, "priority": priority})
+    test_priority.delay(sleeptime=1, priority=100)
+    for x in range(5):
+        priority = x + 1
+        test_priority.apply_async(priority=priority,
+                                  kwargs={"sleeptime": 1, "priority": priority})
+    return 'test done'
+
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -85,14 +100,14 @@ def transcodeToALL():
 def transcodeToMany():
     for i in range(int(request.args['numOfVids'])):
         # Real time scenario
-        
+
         transcoding_tasks = group(
             transcode_1080p.signature(priority=1, immutable=True),
             transcode_720p.signature(priority=2, immutable=True),
             transcode_480p.signature(priority=3, immutable=True),
             transcode_360p.signature(priority=4, immutable=True)
         )
-        
+
         # Removing initial common_setup
         # chord works fine with priorities but not chain :(
         # hence -
